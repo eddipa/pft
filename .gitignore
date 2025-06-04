@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Django
+staticfiles/
+media/
+.env
+
+# Celery logs
+celerybeat-schedule
+celerybeat.pid
+
+# VSCode/IDE
+.vscode/
+*.swp
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# venv
+venv/
+.venv/
