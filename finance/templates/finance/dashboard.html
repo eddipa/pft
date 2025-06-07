@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<h3>This Month</h3>
+<ul>
+  <li>Total Income: {{ income|floatformat:2 }}</li>
+  <li>Total Expenses: {{ expense|floatformat:2 }}</li>
+  <li>Net: {{ net|floatformat:2 }}</li>
+</ul>
+
+<h3>Recent Transactions</h3>
+<table>
+  <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th></tr>
+  {% for t in recent_transactions %}
+    <tr>
+      <td>{{ t.date }}</td>
+      <td>{{ t.get_entry_type_display }}</td>
+      <td>{{ t.category.name|default:"Uncategorized" }}</td>
+      {% if t.get_entry_type_display == "Income" %}
+        <td>{{ t.amount }}</td>
+      {% else %}
+        <td>- {{ t.amount }}</td>
+      {% endif %}
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No transactions yet.</td></tr>
+  {% endfor %}
+</table>
+
+<a href="{% url 'finance:add_transaction' %}">+ Add Transaction</a>
+{% endblock %}
