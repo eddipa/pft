@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
     # apps
     'accounts.apps.AccountsConfig',
+    'finance.apps.FinanceConfig',
 ]
 
 MIDDLEWARE = [
