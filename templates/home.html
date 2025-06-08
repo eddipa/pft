@@ -1,19 +1,40 @@
-<!-- templates/home.html -->
 {% extends "base.html" %}
 
 {% block title %}Home - Personal Finance Tracker{% endblock %}
 
 {% block content %}
-<div class="auth-status">
+<div class="container mt-5">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="card-title mb-4">Welcome to Personal Finance Tracker</h3>
+
       {% if user.is_authenticated %}
-        <span>{{ user.email }}</span>
-        <form action="{% url 'logout' %}" method="post">
-			{% csrf_token %}
-			<button type="submit">Log Out</button>
-		</form>
-        <a href="{% url 'password_change' %}">Password Change</a>
+        <p class="card-text">
+          Logged in as <strong>{{ user.email }}</strong>
+        </p>
+
+        <form action="{% url 'logout' %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger me-2">
+            <i class="bi bi-box-arrow-right"></i> Log Out
+          </button>
+        </form>
+
+        <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-key"></i> Change Password
+        </a>
+
       {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'password_reset' %}">Password Reset</a>
+        <a href="{% url 'login' %}" class="btn btn-primary me-2">
+          <i class="bi bi-box-arrow-in-right"></i> Login
+        </a>
+        <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary">
+          <i class="bi bi-question-circle"></i> Reset Password
+        </a>
       {% endif %}
+    </div>
+  </div>
+
+</div>
 {% endblock %}
