@@ -1,11 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Delete Category</h2>
-<p>Are you sure you want to delete "{{ category.name }}"?</p>
+
+<h2 class="mb-4 text-danger">Delete Category</h2>
+
+<div class="alert alert-warning">
+  <p>
+    Are you sure you want to delete <strong>{{ category.name }}</strong>?
+  </p>
+</div>
 
 <form method="post">
   {% csrf_token %}
-  <button type="submit" style="background-color: red; color: white;">Delete</button>
-  <a href="{% url 'finance:category_list' %}">Cancel</a>
+  <button type="submit" class="btn btn-danger">
+    <i class="bi bi-trash"></i> Delete
+  </button>
+  <a href="{% url 'finance:category_list' %}" class="btn btn-secondary ms-2">Cancel</a>
 </form>
+
 {% endblock %}

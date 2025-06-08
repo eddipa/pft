@@ -1,12 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Edit Transaction</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+<h2 class="mb-4">Edit Transaction</h2>
+
+<form method="post" class="needs-validation" novalidate>
+  {% csrf_token %}
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+      {% endif %}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary">
+    <i class="bi bi-pencil-square"></i> Save Changes
+  </button>
+  <a href="{% url 'finance:dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
 </form>
 
-<a href="{% url 'finance:dashboard' %}">Cancel</a>
 {% endblock %}

@@ -1,28 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Delete Account: {{ account.name }}</h2>
+
+<h2 class="mb-4 text-danger">Delete Account: {{ account.name }}</h2>
 
 {% if transactions_exist %}
-  <p>This account has transactions. What do you want to do with them?</p>
+  <div class="alert alert-warning">
+    <p>This account has transactions. What do you want to do with them?</p>
+  </div>
+
   <form method="post">
     {% csrf_token %}
-    <label><input type="radio" name="action" value="delete_all" required> Delete all transactions</label><br>
-    <label><input type="radio" name="action" value="move" required> Move to another account:</label>
-    <select name="target_account">
-      {% for acc in other_accounts %}
-        <option value="{{ acc.id }}">{{ acc.name }}</option>
-      {% endfor %}
-    </select><br><br>
-    <button type="submit" style="background-color: red; color: white;">Confirm Delete</button>
+
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="radio" name="action" id="delete_all" value="delete_all" required>
+      <label class="form-check-label" for="delete_all">
+        Delete all transactions
+      </label>
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="radio" name="action" id="move" value="move" required>
+      <label class="form-check-label" for="move">
+        Move transactions to another account:
+      </label>
+      <select name="target_account" class="form-select mt-2">
+        {% for acc in other_accounts %}
+          <option value="{{ acc.id }}">{{ acc.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Confirm Delete
+    </button>
+    <a href="{% url 'finance:account_list' %}" class="btn btn-secondary ms-2">Cancel</a>
   </form>
+
 {% else %}
-  <p>This account has no transactions. Are you sure you want to delete it?</p>
+  <div class="alert alert-warning">
+    <p>This account has no transactions. Are you sure you want to delete it?</p>
+  </div>
+
   <form method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="delete_all">
-    <button type="submit" style="background-color: red; color: white;">Delete</button>
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Delete
+    </button>
+    <a href="{% url 'finance:account_list' %}" class="btn btn-secondary ms-2">Cancel</a>
   </form>
 {% endif %}
 
-<a href="{% url 'finance:account_list' %}">Cancel</a>
 {% endblock %}

@@ -1,0 +1,76 @@
+/* General layout */
+body {
+  background-color: #f8f9fa; /* Bootstrap light gray */
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.container {
+  max-width: 960px;
+}
+
+/* Navbar enhancements */
+.navbar .navbar-brand {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Table styling */
+.table th, .table td {
+  vertical-align: middle;
+  text-align: left;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-danger,
+.btn-success {
+  min-width: 120px;
+}
+
+a.btn {
+  margin-right: 0.5rem;
+}
+
+/* Flash messages */
+.alert {
+  margin-top: 1rem;
+}
+
+/* Form styling */
+form label {
+  font-weight: 500;
+}
+
+form input,
+form select,
+form textarea {
+  max-width: 500px;
+}
+
+form button[type="submit"] {
+  margin-top: 1rem;
+}
+
+/* Custom info box for dashboard tips */
+.info-box {
+  background-color: #e2e3e5;
+  border-left: 4px solid #6c757d;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+}
+
+/* Footer */
+footer.footer {
+  font-size: 0.875rem;
+  color: #6c757d;
+  border-top: 1px solid #dee2e6;
+}

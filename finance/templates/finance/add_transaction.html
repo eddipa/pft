@@ -1,12 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<h2>Add Transaction</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add</button>
+<h2 class="mb-4">Add Transaction</h2>
+
+<form method="post" class="needs-validation" novalidate>
+  {% csrf_token %}
+
+  {% for field in form %}
+    <div class="mb-3">
+      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+      {% endif %}
+      {% if field.errors %}
+        <div class="text-danger small">{{ field.errors }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-success">Add Transaction</button>
+  <a href="{% url 'finance:dashboard' %}" class="btn btn-secondary ms-2">Back to Dashboard</a>
 </form>
 
-<a href="{% url 'finance:dashboard' %}">Back to Dashboard</a>
 {% endblock %}

@@ -18,6 +18,7 @@ def create_account(request):
             account = form.save(commit=False)
             account.user = request.user
             account.save()
+            messages.success(request, "New Account added successfully.")
             return redirect('finance:account_list')
     else:
         form = TransactionAccountForm()
@@ -30,6 +31,7 @@ def edit_account(request, pk):
         form = TransactionAccountForm(request.POST, instance=account)
         if form.is_valid():
             form.save()
+            messages.success(request, "Account edited successfully.")
             return redirect('finance:account_list')
     else:
         form = TransactionAccountForm(instance=account)
@@ -57,6 +59,7 @@ def delete_account(request, pk):
             account.account_transactions.update(transaction_account=target)
 
         account.delete()
+        messages.success(request, "Account deleted successfully.")
         return redirect('finance:account_list')
 
     return render(request, 'finance/accounts/account_confirm_delete.html', {

@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Sum
 from django.utils.timezone import now
 
@@ -77,6 +78,7 @@ def add_transaction(request):
             transaction = form.save(commit=False)
             transaction.user = request.user
             transaction.save()
+            messages.success(request, "Transaction added successfully.")
             return redirect('finance:dashboard')  # Redirect after saving
     else:
         form = TransactionForm(user=request.user)
@@ -90,6 +92,7 @@ def edit_transaction(request, pk):
         form = TransactionForm(request.POST, instance=transaction, user=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Transaction updated successfully.")
             return redirect('finance:dashboard')
     else:
         form = TransactionForm(instance=transaction, user=request.user)
@@ -102,6 +105,7 @@ def delete_transaction(request, pk):
 
     if request.method == 'POST':
         transaction.delete()
+        messages.success(request, "Transaction deleted successfully.")
         return redirect('finance:dashboard')
 
     return render(request, 'finance/delete_transaction.html', {'transaction': transaction})

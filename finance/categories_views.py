@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .models import TransactionCategory
 from .forms import TransactionCategoryForm
@@ -18,6 +19,7 @@ def create_category(request):
             category = form.save(commit=False)
             category.user = request.user
             category.save()
+            messages.success(request, "New Category added successfully.")
             return redirect('finance:category_list')
     else:
         form = TransactionCategoryForm()
@@ -30,6 +32,7 @@ def edit_category(request, pk):
         form = TransactionCategoryForm(request.POST, instance=category)
         if form.is_valid():
             form.save()
+            messages.success(request, "Category edited successfully.")
             return redirect('finance:category_list')
     else:
         form = TransactionCategoryForm(instance=category)
@@ -40,5 +43,6 @@ def delete_category(request, pk):
     category = get_object_or_404(TransactionCategory, pk=pk, user=request.user)
     if request.method == 'POST':
         category.delete()
+        messages.success(request, "Category deleted successfully.")
         return redirect('finance:category_list')
     return render(request, 'finance/categories/category_confirm_delete.html', {'category': category})

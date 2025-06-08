@@ -1,17 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Your Categories</h2>
-<a href="{% url 'finance:create_category' %}">+ Add New Category</a>
-<ul>
+
+<h2 class="mb-4">Your Categories</h2>
+
+<a href="{% url 'finance:create_category' %}" class="btn btn-success mb-3">
+  <i class="bi bi-plus-circle"></i> Add New Category
+</a>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
   {% for category in categories %}
-    <li>
-      {{ category.name }} - {{ category.description }}
-      [<a href="{% url 'finance:edit_category' category.pk %}">Edit</a> |
-       <a href="{% url 'finance:delete_category' category.pk %}">Delete</a>]
-    </li>
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ category.name }}</h5>
+          <p class="card-text">{{ category.description|default:"No description" }}</p>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          <a href="{% url 'finance:edit_category' category.pk %}" class="btn btn-sm btn-outline-primary me-2">
+            <i class="bi bi-pencil-square"></i> Edit
+          </a>
+          <a href="{% url 'finance:delete_category' category.pk %}" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i> Delete
+          </a>
+        </div>
+      </div>
+    </div>
   {% empty %}
-    <li>No categories yet.</li>
+    <div class="col-12">
+      <div class="alert alert-info">No categories yet.</div>
+    </div>
   {% endfor %}
-</ul>
-<a href="{% url 'finance:dashboard' %}">Back to Dashboard</a>
+</div>
+
+<a href="{% url 'finance:dashboard' %}" class="btn btn-secondary mt-4">
+  ← Back to Dashboard
+</a>
+
 {% endblock %}

@@ -1,17 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Your Accounts</h2>
-<a href="{% url 'finance:create_account' %}">+ Add New Account</a>
-<ul>
+
+<h2 class="mb-4">Your Accounts</h2>
+
+<a href="{% url 'finance:create_account' %}" class="btn btn-success mb-3">
+  <i class="bi bi-plus-circle"></i> Add New Account
+</a>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
   {% for account in accounts %}
-    <li>
-      {{ account.name }} - {{ account.description }}
-      [<a href="{% url 'finance:edit_account' account.pk %}">Edit</a> |
-       <a href="{% url 'finance:delete_account' account.pk %}">Delete</a>]
-    </li>
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ account.name }}
+            {% if account.is_default %}
+              <span class="badge bg-secondary">Default</span>
+            {% endif %}
+          </h5>
+          <p class="card-text">{{ account.description|default:"No description" }}</p>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          <a href="{% url 'finance:edit_account' account.pk %}" class="btn btn-sm btn-outline-primary me-2">
+            <i class="bi bi-pencil-square"></i> Edit
+          </a>
+          {% if not account.is_default %}
+            <a href="{% url 'finance:delete_account' account.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i> Delete
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   {% empty %}
-    <li>No accounts yet.</li>
+    <div class="col-12">
+      <div class="alert alert-info">No accounts yet.</div>
+    </div>
   {% endfor %}
-</ul>
-<a href="{% url 'finance:dashboard' %}">Back to Dashboard</a>
+</div>
+
+<a href="{% url 'finance:dashboard' %}" class="btn btn-secondary mt-4">
+  ← Back to Dashboard
+</a>
+
 {% endblock %}
