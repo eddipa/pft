@@ -5,7 +5,11 @@
 
 {% block content %}
 	{% if user.is_authenticated %}
-		Hi {{ user.username }}!
+		{% if user.username %}
+			Hi {{ user.username }}!
+		{% else %}
+			Hi {{user.email }}!
+		{% endif %}
 		<p><a href="{% url 'password_change' %}">Password Change</a></p>
 		<form action="{% url 'logout' %}" method="post">
 			{% csrf_token %}

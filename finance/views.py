@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Transaction, TransactionCategory, TransactionAccount
@@ -49,3 +49,17 @@ def add_transaction(request):
     else:
         form = TransactionForm(user=request.user)
     return render(request, 'finance/add_transaction.html', {'form': form})
+
+@login_required
+def edit_transaction(request, pk):
+    transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = TransactionForm(request.POST, instance=transaction, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('finance:dashboard')
+    else:
+        form = TransactionForm(instance=transaction, user=request.user)
+
+    return render(request, 'finance/edit_transaction.html', {'form': form, 'transaction': transaction})
