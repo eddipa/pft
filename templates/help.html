@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>How to Use the Finance App</h2>
+
+<h3>💼 Accounts</h3>
+<ul>
+  <li>Each user has a <strong>default account</strong> that cannot be deleted.</li>
+  <li>You can create as many accounts as you want (e.g., Bank, Wallet, Cash).</li>
+  <li>If you delete an account that has transactions, you'll be asked whether to:
+    <ul>
+      <li>❌ Delete the transactions</li>
+      <li>🔁 Move them to another account of your choice</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>📂 Categories</h3>
+<ul>
+  <li>You start with 5 default categories (Food, Rent, etc.).</li>
+  <li>You can add, edit, and delete your own categories.</li>
+  <li>If no category is selected for a transaction, it's assigned to <strong>"Uncategorized"</strong>.</li>
+</ul>
+
+<h3>💸 Transactions</h3>
+<ul>
+  <li>Use the <strong>Add Transaction</strong> button to record income or expenses.</li>
+  <li>Each transaction belongs to an account and optionally a category.</li>
+  <li>You can <strong>edit</strong> or <strong>delete</strong> transactions at any time.</li>
+</ul>
+
+<h3>📊 Dashboard</h3>
+<ul>
+  <li>Shows your total income, expenses, and net for the selected month.</li>
+  <li>Use the month picker to view past activity.</li>
+  <li>A "Back to Current Month" button will appear when you're viewing older months.</li>
+</ul>
+
+<h3>👤 Account & Login</h3>
+<ul>
+  <li>Only authenticated users can access financial data.</li>
+  <li>You can log in and out from the navigation bar.</li>
+</ul>
+{% if user.is_authenticated %}
+<a href="{% url 'finance:dashboard' %}">← Back to Dashboard</a>
+{% else %}
+<a href="{% url 'home' %}">← Back to Home</a>
+{% endif %}
+{% endblock %}

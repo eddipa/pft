@@ -26,3 +26,14 @@ def create_default_categories(sender, instance, created, **kwargs):
             )   
 
         transaction.on_commit(create_categories)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_default_account(sender, instance, created, **kwargs):
+    if created:
+        TransactionAccount.objects.create(
+            user=instance,
+            name="Default Account",
+            description="Automatically created account",
+            is_default=True
+        )

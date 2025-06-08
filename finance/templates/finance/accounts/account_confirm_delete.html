@@ -1,11 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Delete Account</h2>
-<p>Are you sure you want to delete "{{ account.name }}"?</p>
+<h2>Delete Account: {{ account.name }}</h2>
 
-<form method="post">
-  {% csrf_token %}
-  <button type="submit" style="background-color: red; color: white;">Delete</button>
-  <a href="{% url 'finance:account_list' %}">Cancel</a>
-</form>
+{% if transactions_exist %}
+  <p>This account has transactions. What do you want to do with them?</p>
+  <form method="post">
+    {% csrf_token %}
+    <label><input type="radio" name="action" value="delete_all" required> Delete all transactions</label><br>
+    <label><input type="radio" name="action" value="move" required> Move to another account:</label>
+    <select name="target_account">
+      {% for acc in other_accounts %}
+        <option value="{{ acc.id }}">{{ acc.name }}</option>
+      {% endfor %}
+    </select><br><br>
+    <button type="submit" style="background-color: red; color: white;">Confirm Delete</button>
+  </form>
+{% else %}
+  <p>This account has no transactions. Are you sure you want to delete it?</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="delete_all">
+    <button type="submit" style="background-color: red; color: white;">Delete</button>
+  </form>
+{% endif %}
+
+<a href="{% url 'finance:account_list' %}">Cancel</a>
 {% endblock %}
