@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Accounts</h2>
+<a href="{% url 'finance:create_account' %}">+ Add New Account</a>
+<ul>
+  {% for account in accounts %}
+    <li>
+      {{ account.name }} - {{ account.description }}
+      [<a href="{% url 'finance:edit_account' account.pk %}">Edit</a> |
+       <a href="{% url 'finance:delete_account' account.pk %}">Delete</a>]
+    </li>
+  {% empty %}
+    <li>No accounts yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'finance:dashboard' %}">Back to Dashboard</a>
+{% endblock %}

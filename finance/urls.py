@@ -10,6 +10,12 @@ from .views import (
     edit_category,
     delete_category,
 )
+from .views import (
+    account_list,
+    create_account,
+    edit_account,
+    delete_account,
+)
 
 
 app_name = 'finance'
@@ -26,4 +32,9 @@ urlpatterns = [
     path('categories/new/', create_category, name='create_category'),
     path('categories/<int:pk>/edit/', edit_category, name='edit_category'),
     path('categories/<int:pk>/delete/', delete_category, name='delete_category'),
+
+    path('accounts/', account_list, name='account_list'),
+    path('accounts/new/', create_account, name='create_account'),
+    path('accounts/<int:pk>/edit/', edit_account, name='edit_account'),
+    path('accounts/<int:pk>/delete/', delete_account, name='delete_account'),
 ]

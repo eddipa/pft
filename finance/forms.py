@@ -29,3 +29,15 @@ class TransactionCategoryForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['name' ,'description'].queryset = TransactionCategory.objects.filter(user=user)
+
+
+class TransactionAccountForm(forms.ModelForm):
+    class Meta:
+        model = TransactionAccount
+        fields = ['name', 'description']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Pull the user from passed-in kwargs
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['name' ,'description'].queryset = TransactionAccount.objects.filter(user=user)
