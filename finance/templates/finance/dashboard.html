@@ -23,7 +23,8 @@
         <td>- {{ t.amount }}</td>
       {% endif %}
       <td>
-        <a href="{% url 'finance:edit_transaction' t.pk %}">edit</a>
+        <a href="{% url 'finance:edit_transaction' t.pk %}">edit</a> |
+        <a href="{% url 'finance:delete_transaction' t.pk %}">Delete</a>
       </td>
     </tr>
   {% empty %}
