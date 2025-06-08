@@ -1,39 +1,45 @@
 {% extends 'base.html' %}
+{% block title %}Your Categories{% endblock %}
+
 {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="bi bi-folder2-open"></i> Your Categories</h2>
 
-<h2 class="mb-4">Your Categories</h2>
+  <a href="{% url 'finance:create_category' %}" class="btn btn-success mb-4">
+    <i class="bi bi-plus-circle"></i> Add New Category
+  </a>
 
-<a href="{% url 'finance:create_category' %}" class="btn btn-success mb-3">
-  <i class="bi bi-plus-circle"></i> Add New Category
-</a>
-
-<div class="row row-cols-1 row-cols-md-2 g-4">
-  {% for category in categories %}
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">{{ category.name }}</h5>
-          <p class="card-text">{{ category.description|default:"No description" }}</p>
-        </div>
-        <div class="card-footer bg-transparent border-top-0">
-          <a href="{% url 'finance:edit_category' category.pk %}" class="btn btn-sm btn-outline-primary me-2">
-            <i class="bi bi-pencil-square"></i> Edit
-          </a>
-          <a href="{% url 'finance:delete_category' category.pk %}" class="btn btn-sm btn-outline-danger">
-            <i class="bi bi-trash"></i> Delete
-          </a>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for category in categories %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">{{ category.name }}</h5>
+            <p class="card-text text-muted">{{ category.description|default:"No description provided." }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+            <a href="{% url 'finance:edit_category' category.pk %}" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            <a href="{% url 'finance:delete_category' category.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i> Delete
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  {% empty %}
-    <div class="col-12">
-      <div class="alert alert-info">No categories yet.</div>
-    </div>
-  {% endfor %}
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info text-center">
+          <i class="bi bi-info-circle-fill"></i> You don't have any categories yet.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'finance:dashboard' %}" class="btn btn-secondary">
+      ← Back to Dashboard
+    </a>
+  </div>
 </div>
-
-<a href="{% url 'finance:dashboard' %}" class="btn btn-secondary mt-4">
-  ← Back to Dashboard
-</a>
-
 {% endblock %}

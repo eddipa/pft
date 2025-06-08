@@ -4,21 +4,27 @@
 <h2 class="mb-4 text-danger">Delete Transaction</h2>
 
 <div class="alert alert-warning">
-  <strong>Are you sure you want to delete this transaction?</strong>
+  <strong>This action is irreversible.</strong> Are you sure you want to delete the following transaction?
 </div>
 
 <ul class="list-group mb-4">
   <li class="list-group-item"><strong>Date:</strong> {{ transaction.date }}</li>
-  <li class="list-group-item"><strong>Amount:</strong> {{ transaction.amount }}</li>
+  <li class="list-group-item"><strong>Amount:</strong>
+    {% if transaction.entry_type == "IN" %}
+      <span class="text-success">{{ transaction.amount }}</span>
+    {% else %}
+      <span class="text-danger">-{{ transaction.amount }}</span>
+    {% endif %}
+  </li>
   <li class="list-group-item"><strong>Type:</strong> {{ transaction.get_entry_type_display }}</li>
-  <li class="list-group-item"><strong>Category:</strong> {{ transaction.category|default:"Uncategorized" }}</li>
-  <li class="list-group-item"><strong>Description:</strong> {{ transaction.description }}</li>
+  <li class="list-group-item"><strong>Category:</strong> {{ transaction.category.name|default:"Uncategorized" }}</li>
+  <li class="list-group-item"><strong>Description:</strong> {{ transaction.description|default:"—" }}</li>
 </ul>
 
 <form method="post">
   {% csrf_token %}
   <button type="submit" class="btn btn-danger">
-    <i class="bi bi-trash"></i> Delete
+    <i class="bi bi-trash"></i> Confirm Delete
   </button>
   <a href="{% url 'finance:dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
 </form>

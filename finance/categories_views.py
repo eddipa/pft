@@ -41,8 +41,35 @@ def edit_category(request, pk):
 @login_required
 def delete_category(request, pk):
     category = get_object_or_404(TransactionCategory, pk=pk, user=request.user)
-    if request.method == 'POST':
-        category.delete()
-        messages.success(request, "Category deleted successfully.")
-        return redirect('finance:category_list')
-    return render(request, 'finance/categories/category_confirm_delete.html', {'category': category})
+
+    # Prevent deletion of default/undeletable categories if needed
+    if category.name == "Uncategorized":
+        messages.error(request, "This default category cannot be deleted.")
+        return redirect("finance:category_list")
+
+    transactions_exist = category.category_transactions.exists()
+    other_categories = request.user.transaction_categories.exclude(pk=category.pk)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "delete_all":
+            category.transactions.all().delete()
+            category.delete()
+            messages.success(request, "Category and its transactions deleted.")
+            return redirect("finance:category_list")
+        elif action == "move":
+            target_id = request.POST.get("target_category")
+            try:
+                target_category = other_categories.get(pk=target_id)
+                category.category_transactions.update(category=target_category)
+                category.delete()
+                messages.success(request, "Transactions moved and category deleted.")
+                return redirect("finance:category_list")
+            except TransactionCategory.DoesNotExist:
+                messages.error(request, "Selected category not found.")
+    
+    return render(request, "finance/categories/category_confirm_delete.html", {
+        "category": category,
+        "transactions_exist": transactions_exist,
+        "other_categories": other_categories,
+    })

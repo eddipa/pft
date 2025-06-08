@@ -1,46 +1,56 @@
 {% extends 'base.html' %}
+{% block title %}Your Accounts{% endblock %}
+
 {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">
+    <i class="bi bi-wallet2"></i> Your Accounts
+  </h2>
 
-<h2 class="mb-4">Your Accounts</h2>
+  <a href="{% url 'finance:create_account' %}" class="btn btn-success mb-4">
+    <i class="bi bi-plus-circle"></i> Add New Account
+  </a>
 
-<a href="{% url 'finance:create_account' %}" class="btn btn-success mb-3">
-  <i class="bi bi-plus-circle"></i> Add New Account
-</a>
-
-<div class="row row-cols-1 row-cols-md-2 g-4">
-  {% for account in accounts %}
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">
-            {{ account.name }}
-            {% if account.is_default %}
-              <span class="badge bg-secondary">Default</span>
-            {% endif %}
-          </h5>
-          <p class="card-text">{{ account.description|default:"No description" }}</p>
-        </div>
-        <div class="card-footer bg-transparent border-top-0">
-          <a href="{% url 'finance:edit_account' account.pk %}" class="btn btn-sm btn-outline-primary me-2">
-            <i class="bi bi-pencil-square"></i> Edit
-          </a>
-          {% if not account.is_default %}
-            <a href="{% url 'finance:delete_account' account.pk %}" class="btn btn-sm btn-outline-danger">
-              <i class="bi bi-trash"></i> Delete
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for account in accounts %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title d-flex align-items-center justify-content-between">
+              {{ account.name }}
+              {% if account.is_default %}
+                <span class="badge bg-secondary ms-2">Default</span>
+              {% endif %}
+            </h5>
+            <p class="card-text text-muted">
+              {{ account.description|default:"No description provided." }}
+            </p>
+          </div>
+          <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+            <a href="{% url 'finance:edit_account' account.pk %}" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-pencil-square"></i> Edit
             </a>
-          {% endif %}
+            {% if not account.is_default %}
+              <a href="{% url 'finance:delete_account' account.pk %}" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i> Delete
+              </a>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-  {% empty %}
-    <div class="col-12">
-      <div class="alert alert-info">No accounts yet.</div>
-    </div>
-  {% endfor %}
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info text-center">
+          <i class="bi bi-info-circle-fill"></i> No accounts yet.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'finance:dashboard' %}" class="btn btn-secondary">
+      ← Back to Dashboard
+    </a>
+  </div>
 </div>
-
-<a href="{% url 'finance:dashboard' %}" class="btn btn-secondary mt-4">
-  ← Back to Dashboard
-</a>
-
 {% endblock %}
