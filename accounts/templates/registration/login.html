@@ -10,27 +10,22 @@
       <form method="post" novalidate>
         {% csrf_token %}
 
+        {# Email Field #}
         <div class="mb-3">
-          <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-          {{ form.email }}
-          {% if form.email.errors %}
-            <div class="text-danger small">{{ form.email.errors }}</div>
+          <label for="{{ form.username.id_for_label }}" class="form-label">Email</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="text-danger small">{{ form.username.errors }}</div>
           {% endif %}
         </div>
 
+        {# Password Field #}
         <div class="mb-3">
           <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
           {{ form.password }}
           {% if form.password.errors %}
             <div class="text-danger small">{{ form.password.errors }}</div>
           {% endif %}
-        </div>
-
-        <div class="form-check mb-3">
-          {{ form.remember_me }}  <!-- checkbox first -->
-          <label for="{{ form.remember_me.id_for_label }}" class="form-check-label">
-            {{ form.remember_me.label }}
-          </label>
         </div>
 
         <button type="submit" class="btn btn-primary w-100">
