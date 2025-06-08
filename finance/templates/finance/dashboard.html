@@ -58,6 +58,31 @@
     </div>
   </div>
 
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0"><i class="bi bi-graph-up"></i> Summary Insights</h5>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <strong>% of Income Spent:</strong> {{ percent_spent }}%
+        </li>
+        <li class="list-group-item">
+          <strong>% of Income Saved:</strong> {{ percent_saved }}%
+        </li>
+        <li class="list-group-item">
+          <strong>Top Spending Category:</strong>
+          {% if top_category %}
+            {{ top_category.category__name }} ({{ top_category.total }})
+          {% else %}
+            N/A
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
   <h3 class="mt-4">Recent Transactions</h3>
 
   <!-- Table for desktop -->

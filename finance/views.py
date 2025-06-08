@@ -1,4 +1,5 @@
 from datetime import date, datetime
+import json
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -53,9 +54,20 @@ def dashboard(request):
     income = monthly_transactions.filter(entry_type="IN").aggregate(Sum("amount"))["amount__sum"] or 0
     expense = monthly_transactions.filter(entry_type="EX").aggregate(Sum("amount"))["amount__sum"] or 0
     net = income - expense
+    percent_spent = (expense / income * 100) if income > 0 else 0
+    percent_saved = 100 - percent_spent if income > 0 else 0
+
+    # Find most spent category
+    top_category = (
+        monthly_transactions.filter(entry_type="EX")
+        .values("category__name")
+        .annotate(total=Sum("amount"))
+        .order_by("-total")
+        .first()
+    )
 
     # Recent transactions
-    recent = monthly_transactions.order_by("-date")[:5]
+    recent = monthly_transactions.order_by("-date")[:7]
 
     context = {
         "accounts": accounts,
@@ -65,10 +77,32 @@ def dashboard(request):
         "recent_transactions": recent,
         "selected_month": month_start,
         "current_month": now().date(),
+        "percent_spent": round(percent_spent, 1),
+        "percent_saved": round(percent_saved, 1),
+        "top_category": top_category,
     }
 
     return render(request, "finance/dashboard.html", context)
 
+@login_required
+def analysis_view(request):
+    user = request.user
+    transactions = Transaction.objects.filter(user=user, entry_type="Ex")
+
+    # Aggregate expenses per category
+    category_data = {}
+    for t in transactions:
+        cat = t.category.name if t.category else "Uncategorized"
+        category_data[cat] = category_data.get(cat, 0) + float(t.amount)
+
+    chart_labels = list(category_data.keys())
+    chart_values = list(category_data.values())
+
+    context = {
+        "chart_labels": json.dumps(chart_labels),
+        "chart_values": json.dumps(chart_values),
+    }
+    return render(request, "finance/analysis.html", context)
 
 @login_required
 def add_transaction(request):

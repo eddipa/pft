@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from .views import dashboard
+from .views import dashboard, analysis_view
 from .views import (add_transaction, 
 	edit_transaction, 
 	delete_transaction)
@@ -22,6 +22,7 @@ app_name = 'finance'
 
 urlpatterns = [
 	path('', dashboard, name='dashboard'),
+    path('analysis/', analysis_view, name='analysis'),
 
 	path('add-transaction/', add_transaction, name='add_transaction'),
 	# there is no view transaction view
