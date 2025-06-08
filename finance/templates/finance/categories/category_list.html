@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Categories</h2>
+<a href="{% url 'finance:create_category' %}">+ Add New Category</a>
+<ul>
+  {% for category in categories %}
+    <li>
+      {{ category.name }} - {{ category.description }}
+      [<a href="{% url 'finance:edit_category' category.pk %}">Edit</a> |
+       <a href="{% url 'finance:delete_category' category.pk %}">Delete</a>]
+    </li>
+  {% empty %}
+    <li>No categories yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'finance:dashboard' %}">Back to Dashboard</a>
+{% endblock %}
