@@ -2,7 +2,16 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<h3>This Month</h3>
+<form method="get">
+  <label for="month">Select Month:</label>
+  <input type="month" name="month" id="month" value="{{ selected_month|date:'Y-m' }}">
+  <button type="submit">Go</button>
+</form>
+
+<h3>Transactions for: {{ selected_month|date:"F Y" }}</h3>
+{% if selected_month|date:'Y-m' != current_month|date:'Y-m' %}
+  <a href="{% url 'finance:dashboard' %}" class="button">Back to Current Month</a>
+{% endif %}
 <ul>
   <li>Total Income: {{ income|floatformat:2 }}</li>
   <li>Total Expenses: {{ expense|floatformat:2 }}</li>

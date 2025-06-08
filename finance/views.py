@@ -1,8 +1,11 @@
+from datetime import date, datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.utils.timezone import now
+
 from .models import Transaction, TransactionCategory, TransactionAccount
-from datetime import date
 from .forms import TransactionForm
 
 
@@ -17,8 +20,32 @@ def dashboard(request):
     accounts = TransactionAccount.objects.filter(user=user)
     # ToDo: Assume accounts have a balance field (optional)
 
-    # Summary by entry type
-    monthly_transactions = Transaction.objects.filter(user=user, date__gte=month_start)
+    user = request.user
+
+    # Get selected month from GET parameter (default: current month)
+    month_str = request.GET.get("month")
+    if month_str:
+        try:
+            selected_date = datetime.strptime(month_str, "%Y-%m")
+        except ValueError:
+            selected_date = now().date()
+    else:
+        selected_date = now().date()
+
+    # Start and end of selected month
+    month_start = selected_date.replace(day=1)
+    if month_start.month == 12:
+        month_end = month_start.replace(year=month_start.year+1, month=1)
+    else:
+        month_end = month_start.replace(month=month_start.month+1)
+
+    # Filter transactions for selected month
+    monthly_transactions = Transaction.objects.filter(
+        user=user,
+        date__gte=month_start,
+        date__lt=month_end
+    )
+
     income = monthly_transactions.filter(entry_type="IN").aggregate(Sum("amount"))["amount__sum"] or 0
     expense = monthly_transactions.filter(entry_type="EX").aggregate(Sum("amount"))["amount__sum"] or 0
     net = income - expense
@@ -32,6 +59,8 @@ def dashboard(request):
         "expense": expense,
         "net": net,
         "recent_transactions": recent,
+        "selected_month": month_start,
+        "current_month": now().date(),
     }
 
     return render(request, "finance/dashboard.html", context)
