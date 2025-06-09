@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.db import transaction
 
-from .models import TransactionCategory
+from .models import TransactionCategory, TransactionAccount
 
 DEFAULT_CATEGORIES = [
     {"name": "Food", "description": "Expenses for food and groceries"},

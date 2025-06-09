@@ -9,8 +9,10 @@
     <div class="card-body">
       <h3 class="card-title mb-4">Welcome to Personal Finance Tracker</h3>
 
+      <p class="mb-3">Manage your income, expenses, and financial goals with ease.</p>
+
       {% if user.is_authenticated %}
-        <p class="card-text">
+        <p class="card-text mb-3">
           Logged in as <strong>{{ user.email }}</strong>
         </p>
 
@@ -29,8 +31,13 @@
         <a href="{% url 'login' %}" class="btn btn-primary me-2">
           <i class="bi bi-box-arrow-in-right"></i> Login
         </a>
-        <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary">
-          <i class="bi bi-question-circle"></i> Reset Password
+
+        <a href="{% url 'signup' %}" class="btn btn-outline-success me-2">
+          <i class="bi bi-person-plus"></i> Sign Up
+        </a>
+
+        <a href="{% url 'password_reset' %}" class="btn btn-outline-warning">
+          <i class="bi bi-key-fill"></i> Reset Password
         </a>
       {% endif %}
     </div>

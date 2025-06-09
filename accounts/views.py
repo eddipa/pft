@@ -12,7 +12,16 @@ from .forms import (
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'registration/signup.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('finance:dashboard')  # default if login is elsewhere
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.save()
+        login(self.request, user)  # log the user in after signup
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('finance:dashboard')
 
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
