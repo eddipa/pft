@@ -92,7 +92,10 @@ python manage.py test
 
 ## 📜 License
 
-This project is licensed under the MIT License. Feel free to use, modify, and contribute.
+This project is licensed under the [MIT License](LICENSE).
+
+© 2024 Masoud Koochak. You are free to use, modify, and distribute this software under the terms of the MIT license.
+
 
 ---
 
