@@ -15,7 +15,16 @@
         {% for field in form %}
           <div class="mb-3">
             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-            {{ field }}
+            {% if field.name == 'icon' %}
+              <div class="d-flex align-items-center gap-2">
+                {{ field }}
+                {% if field.value %}
+                  <i class="{{ field.value }} fa-xl"></i>
+                {% endif %}
+              </div>
+            {% else %}
+              {{ field }}
+            {% endif %}
             {% if field.help_text %}
               <div class="form-text">{{ field.help_text }}</div>
             {% endif %}
@@ -35,4 +44,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Optional: Add icons to the select element itself (for display in UI)
+  document.addEventListener('DOMContentLoaded', function () {
+    const iconSelect = document.querySelector('select[name="icon"]');
+    if (iconSelect) {
+      iconSelect.classList.add('icon-select');
+    }
+  });
+</script>
+
 {% endblock %}

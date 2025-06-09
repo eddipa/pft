@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import TransactionCategory, TransactionAccount, Transaction
+from .forms import CategoryAdminForm, AccountAdminForm
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
@@ -11,13 +12,15 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(TransactionCategory)
 class TransactionCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'description', 'created_at')
+    form = CategoryAdminForm
+    list_display = ('name', 'user', 'description', 'color', 'icon', 'created_at')
     search_fields = ('name', 'user__username')
     list_filter = ('user', 'name',)
 
 
 @admin.register(TransactionAccount)
 class TransactionAccountAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'description', 'created_at')
+    form = AccountAdminForm
+    list_display = ('user', 'name', 'color', 'description', 'created_at')
     search_fields = ('name', 'user__username')
     list_filter = ('user',)

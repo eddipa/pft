@@ -64,8 +64,28 @@
         <td>{{ transaction.date }}</td>
         <td>{{ transaction.description }}</td>
         <td>{{ transaction.amount }}</td>
-        <td>{{ transaction.category.name }}</td>
-        <td>{{ transaction.account.name }}</td>
+        <td>
+				  {% if transaction.category %}
+				    <span class="badge" style="background-color: {{ transaction.category.color|default:'#6c757d' }}; color: white;">
+				      {% if transaction.category.icon %}
+				        <i class="{{ transaction.category.icon|default:'fa-solid fa-tag' }}"></i>
+				      {% endif %}
+				      {{ transaction.category.name }}
+				    </span>
+				  {% else %}
+				    <span class="text-muted">No category</span>
+				  {% endif %}
+				</td>
+        <td>
+		  {% if transaction.transaction_account %}
+			  <span class="badge"
+			        style="background-color: {{ transaction.transaction_account.color|default:'#6c757d' }}; color: black;">
+			    {{ transaction.transaction_account.name }}
+			  </span>
+			{% endif %}
+
+		</td>
+
       </tr>
       {% empty %}
       <tr>

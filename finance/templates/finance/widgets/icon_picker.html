@@ -1,0 +1,7 @@
+<div style="display: flex; align-items: center; gap: 10px;">
+  <input type="text" name="{{ widget.name }}" value="{{ widget.value|stringformat:'s' }}"
+         class="form-control" placeholder="fa-solid fa-car" id="{{ widget.attrs.id }}">
+  {% if widget.value %}
+    <i class="{{ widget.value }} fa-xl"></i>
+  {% endif %}
+</div>

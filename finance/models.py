@@ -14,6 +14,8 @@ class TransactionAccount(models.Model):
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
+    color = models.CharField(max_length=20, default='secondary')
+
     class Meta:
         unique_together = ('user', 'name')  # Each user can have unique account names
 
@@ -30,6 +32,9 @@ class TransactionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+
+    color = models.CharField(max_length=20, default='primary')  # Bootstrap color: primary, danger, etc.
+    icon = models.CharField(max_length=50, blank=True, help_text='FontAwesome class e.g. fa-solid fa-utensils')
 
     class Meta:
         unique_together = ('user', 'name')  # Each user can have unique category names
