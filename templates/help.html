@@ -2,19 +2,19 @@
 {% block content %}
 
 <div class="container py-4">
-  <h2 class="mb-4"><i class="bi bi-info-circle"></i> How to Use the Finance App</h2>
+  <h2 class="mb-4"><i class="bi bi-info-circle"></i> How to Use the Personal Finance Tracker</h2>
 
   <!-- Accounts Section -->
   <div class="mb-4">
-    <h4><i class="bi bi-wallet2 text-primary"></i> Accounts</h4>
+    <h4><i class="bi bi-wallet2 text-primary"></i> Managing Accounts</h4>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Each user has a <strong>default account</strong> that cannot be deleted.</li>
-      <li class="list-group-item">Create as many accounts as you like (e.g., Bank, Wallet, Cash).</li>
+      <li class="list-group-item">Each user has a <strong>default account</strong> which cannot be deleted.</li>
+      <li class="list-group-item">You can create additional accounts (e.g., Bank, Wallet, Cash) as needed.</li>
       <li class="list-group-item">
-        If you delete an account that has transactions, you'll be asked to:
+        If you delete an account that has transactions, you'll be prompted to:
         <ul class="mt-2">
-          <li>❌ Delete the related transactions</li>
-          <li>🔁 Move them to another account</li>
+          <li>❌ Permanently delete the associated transactions</li>
+          <li>🔁 Reassign them to another account</li>
         </ul>
       </li>
     </ul>
@@ -22,40 +22,42 @@
 
   <!-- Categories Section -->
   <div class="mb-4">
-    <h4><i class="bi bi-tags text-success"></i> Categories</h4>
+    <h4><i class="bi bi-tags text-success"></i> Organizing Categories</h4>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Start with 5 default categories (e.g., Food, Rent).</li>
-      <li class="list-group-item">Create, edit, or delete your own categories anytime.</li>
-      <li class="list-group-item">Uncategorized transactions will default to <strong>"Uncategorized"</strong>.</li>
+      <li class="list-group-item">Start with a few default categories like <strong>Food</strong> or <strong>Rent</strong>.</li>
+      <li class="list-group-item">You can add, edit, or remove categories at any time.</li>
+      <li class="list-group-item">If no category is selected for a transaction, it will be labeled as <strong>"Uncategorized"</strong>.</li>
     </ul>
   </div>
 
   <!-- Transactions Section -->
   <div class="mb-4">
-    <h4><i class="bi bi-cash-coin text-warning"></i> Transactions</h4>
+    <h4><i class="bi bi-cash-coin text-warning"></i> Recording Transactions</h4>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Click <strong>Add Transaction</strong> to record income or expenses.</li>
-      <li class="list-group-item">Each transaction must belong to an account and optionally a category.</li>
-      <li class="list-group-item">You can <strong>edit</strong> or <strong>delete</strong> any transaction.</li>
+      <li class="list-group-item">Use the <strong>Add Transaction</strong> button to log income or expenses.</li>
+      <li class="list-group-item">Each transaction must be linked to an account, and optionally to a category.</li>
+      <li class="list-group-item">You can <strong>edit</strong> or <strong>delete</strong> any transaction from the list.</li>
     </ul>
   </div>
 
   <!-- Dashboard Section -->
   <div class="mb-4">
-    <h4><i class="bi bi-graph-up text-info"></i> Dashboard</h4>
+    <h4><i class="bi bi-graph-up text-info"></i> Analyzing with the Dashboard</h4>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">View income, expenses, and net balance for each month.</li>
-      <li class="list-group-item">Use the month picker to browse financial history.</li>
-      <li class="list-group-item">A "Back to Current Month" button helps you return quickly.</li>
+      <li class="list-group-item">The dashboard shows a summary of your income, expenses, and net balance by month.</li>
+      <li class="list-group-item">Use filters to view specific months or accounts.</li>
+      <li class="list-group-item">Visual charts help you understand your financial trends.</li>
+      <li class="list-group-item">Click <strong>Download PDF</strong> to export a summary report.</li>
     </ul>
   </div>
 
   <!-- Auth Section -->
   <div class="mb-4">
-    <h4><i class="bi bi-person-lock text-secondary"></i> Account & Login</h4>
+    <h4><i class="bi bi-person-lock text-secondary"></i> Account & Access</h4>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Only logged-in users can access financial data.</li>
-      <li class="list-group-item">Login/logout available in the navigation bar.</li>
+      <li class="list-group-item">You must be logged in to access your dashboard and data.</li>
+      <li class="list-group-item">Login and logout options are available in the navigation bar.</li>
+      <li class="list-group-item">Your data is stored securely and is only visible to you.</li>
     </ul>
   </div>
 
