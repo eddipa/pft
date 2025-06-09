@@ -1,10 +1,13 @@
 from datetime import date, datetime
 import json
+import csv
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Sum
+from django.db.models import Sum ,Q
+from django.core.paginator import Paginator
 from django.utils.timezone import now
 
 from .models import Transaction, TransactionCategory, TransactionAccount
@@ -103,6 +106,104 @@ def analysis_view(request):
         "chart_values": json.dumps(chart_values),
     }
     return render(request, "finance/analysis.html", context)
+
+@login_required
+def transaction_list(request):
+    transactions = Transaction.objects.filter(user=request.user)
+
+    # Get parameters
+    query = request.GET.get('q', '').strip()
+    category_id = request.GET.get('category', '').strip()
+    account_id = request.GET.get('account', '').strip()
+    start_date = request.GET.get('start_date', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+
+    # Apply filters
+    if query:
+        transactions = transactions.filter(description__icontains=query)
+
+    if category_id.isdigit():
+        transactions = transactions.filter(category_id=int(category_id))
+
+    if account_id.isdigit():
+        transactions = transactions.filter(transaction_account_id=int(account_id))
+
+     # Date filtering
+    if start_date:
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d')
+            transactions = transactions.filter(date__gte=start)
+        except ValueError:
+            pass
+
+    if end_date:
+        try:
+            end = datetime.strptime(end_date, '%Y-%m-%d')
+            transactions = transactions.filter(date__lte=end)
+        except ValueError:
+            pass
+
+    categories = TransactionCategory.objects.filter(user=request.user)
+    accounts = TransactionAccount.objects.filter(user=request.user)
+
+    # pagination
+    paginator = Paginator(transactions, 10) 
+    page = request.GET.get('page')
+    transactions = paginator.get_page(page)
+
+    return render(request, 'finance/transaction_list.html', {
+        'transactions': transactions,
+        'categories': categories,
+        'accounts': accounts,
+        'query': query,
+        'selected_category': int(category_id) if category_id.isdigit() else None,
+        'selected_account': int(account_id) if account_id.isdigit() else None,
+        'start_date': start_date,
+        'end_date': end_date,
+    })
+
+@login_required
+def transaction_export_csv(request):
+    transactions = Transaction.objects.filter(user=request.user)
+
+    query = request.GET.get('q', '').strip()
+    category_id = request.GET.get('category', '').strip()
+    account_id = request.GET.get('account', '').strip()
+    start_date = request.GET.get('start_date', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+
+    if query:
+        transactions = transactions.filter(description__icontains=query)
+    if category_id.isdigit():
+        transactions = transactions.filter(category_id=int(category_id))
+    if account_id.isdigit():
+        transactions = transactions.filter(transaction_account_id=int(account_id))
+    if start_date:
+        try:
+            transactions = transactions.filter(date__gte=start_date)
+        except:
+            pass
+    if end_date:
+        try:
+            transactions = transactions.filter(date__lte=end_date)
+        except:
+            pass
+
+    # Create CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transactions.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Description', 'Amount', 'Category', 'Account'])
+
+    for t in transactions:
+        writer.writerow([
+            t.date, t.description, t.amount,
+            t.category.name if t.category else '',
+            t.transaction_account.name if t.transaction_account else ''
+        ])
+
+    return response
 
 @login_required
 def add_transaction(request):

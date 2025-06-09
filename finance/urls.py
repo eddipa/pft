@@ -1,7 +1,10 @@
 from django.urls import path, include
 
 from .views import dashboard, analysis_view
-from .views import (add_transaction, 
+from .views import (
+    transaction_list,
+    transaction_export_csv,
+    add_transaction, 
 	edit_transaction, 
 	delete_transaction)
 from .views import (
@@ -24,6 +27,8 @@ urlpatterns = [
 	path('', dashboard, name='dashboard'),
     path('analysis/', analysis_view, name='analysis'),
 
+    path('transactions/', transaction_list, name='transaction_list'),
+    path('transactions/export/', transaction_export_csv, name='transaction_export_csv'),
 	path('add-transaction/', add_transaction, name='add_transaction'),
 	# there is no view transaction view
 	path('transaction/<int:pk>', edit_transaction, name='edit_transaction'),

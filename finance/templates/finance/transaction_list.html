@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Transactions</h2>
+
+	<form method="get" class="row g-2 mb-4">
+	  <div class="col-md-3">
+	    <input type="text" name="q" class="form-control" placeholder="Search description" value="{{ query }}">
+	  </div>
+
+	  <div class="col-md-2">
+	    <select name="category" class="form-control">
+	      <option value="">All Categories</option>
+	      {% for cat in categories %}
+	        <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+	      {% endfor %}
+	    </select>
+	  </div>
+
+	  <div class="col-md-2">
+	    <select name="account" class="form-control">
+	      <option value="">All Accounts</option>
+	      {% for acc in accounts %}
+	        <option value="{{ acc.id }}" {% if selected_account == acc.id %}selected{% endif %}>{{ acc.name }}</option>
+	      {% endfor %}
+	    </select>
+	  </div>
+
+	  <div class="col-md-2">
+	    <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+	  </div>
+
+	  <div class="col-md-2">
+	    <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+	  </div>
+
+	  <div class="col-md-1">
+	    <button type="submit" class="btn btn-primary w-100">Filter</button>
+	  </div>
+
+  		<div class="col-md-1">
+			<a href="{% url 'finance:transaction_list' %}" class="btn btn-secondary w-100">Clear</a>
+		</div>
+
+		<div class="col-md-2">
+		  <a href="{% url 'finance:transaction_export_csv' %}?{{ request.GET.urlencode }}" class="btn btn-success w-100">Export CSV</a>
+		</div>
+	</form>
+
+
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Account</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+      <tr>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.description }}</td>
+        <td>{{ transaction.amount }}</td>
+        <td>{{ transaction.category.name }}</td>
+        <td>{{ transaction.account.name }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No transactions found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav aria-label="Transaction pagination">
+  <ul class="pagination">
+    {% if transactions.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode|safe }}&{% endif %}page={{ transactions.previous_page_number }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    <li class="page-item disabled"><span class="page-link">
+      Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}
+    </span></li>
+
+    {% if transactions.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode|safe }}&{% endif %}page={{ transactions.next_page_number }}">Next</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+</div>
+{% endblock %}
