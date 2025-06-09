@@ -48,6 +48,12 @@ class TransactionForm(forms.ModelForm):
             self.fields['category'].queryset = TransactionCategory.objects.filter(user=user)
             self.fields['transaction_account'].queryset = TransactionAccount.objects.filter(user=user)
 
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if amount <= 0:
+            raise forms.ValidationError("Amount must be greater than zero.")
+        return amount
+
 class TransactionCategoryForm(forms.ModelForm):
     class Meta:
         model = TransactionCategory
@@ -66,6 +72,12 @@ class TransactionCategoryForm(forms.ModelForm):
         if user:
             self.fields['name' ,'description'].queryset = TransactionCategory.objects.filter(user=user)
 
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if TransactionCategory.objects.filter(name__iexact=name, user=self.user).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("You already have a category with this name.")
+        return name
+
 class TransactionAccountForm(forms.ModelForm):
     class Meta:
         model = TransactionAccount
@@ -82,6 +94,12 @@ class TransactionAccountForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
         if user:
             self.fields['name' ,'description'].queryset = TransactionAccount.objects.filter(user=user)
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if TransactionAccount.objects.filter(name__iexact=name, user=self.user).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("You already have an account with this name.")
+        return name
 
 class CategoryAdminForm(forms.ModelForm):
     class Meta:
