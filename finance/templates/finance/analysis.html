@@ -69,6 +69,19 @@
     </div>
   </div>
 </div>
+<span id="topCategoryDisplay" style="display:none;">{{ top_category }}</span>
+<form id="pdfForm" method="post" action="{% url 'finance:export_analysis_pdf' %}" target="_blank">
+  {% csrf_token %}
+  <input type="hidden" name="net_savings" value="{{ net_savings }}">
+  <input type="hidden" name="top_category" id="topCategory">
+  <input type="hidden" name="chart_pie" id="chartPie">
+  <input type="hidden" name="chart_bar" id="chartBar">
+  <input type="hidden" name="month" value="{{ selected_month }}">
+  <input type="hidden" name="account_name" value="{% for acc in account_options %}{% if acc.id|stringformat:"s" == selected_account %}{{ acc.name }}{% endif %}{% endfor %}">
+  <button type="submit" class="btn btn-secondary mb-3">Download PDF</button>
+</form>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -155,6 +168,24 @@
       }
     }
   });
+
+
+  document.getElementById('pdfForm').addEventListener('submit', function () {
+    const pieCanvas = document.getElementById('categoryChart');
+    const barCanvas = document.getElementById('historyChart');
+
+    const pieData = pieCanvas.toDataURL("image/png");
+    const barData = barCanvas.toDataURL("image/png");
+
+    document.getElementById('chartPie').value = pieData;
+    document.getElementById('chartBar').value = barData;
+
+    // Explicitly set the category name as string (from a data-* tag or hidden span)
+    const topCategoryValue = document.getElementById('topCategoryDisplay')?.textContent || 'N/A';
+    document.getElementById('topCategory').value = topCategoryValue;
+  });
+
+
 </script>
 
 

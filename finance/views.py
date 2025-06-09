@@ -3,6 +3,7 @@ import json
 import csv
 from collections import defaultdict
 
+from django.template.loader import get_template
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -10,6 +11,8 @@ from django.contrib import messages
 from django.db.models import Sum ,Q
 from django.core.paginator import Paginator
 from django.utils.timezone import now
+
+from xhtml2pdf import pisa
 
 from .models import Transaction, TransactionCategory, TransactionAccount
 from .forms import TransactionForm, TransactionCategoryForm
@@ -187,6 +190,55 @@ def analysis_view(request):
     }
 
     return render(request, 'finance/analysis.html', context)
+
+@login_required
+def export_analysis_pdf(request):
+    if request.method == 'POST':
+        net_savings = request.POST.get('net_savings', 'N/A')
+        top_category = request.POST.get('top_category', 'N/A')
+        chart_pie = request.POST.get('chart_pie', '')
+        chart_bar = request.POST.get('chart_bar', '')
+        selected_month = request.POST.get('month', '')
+        account_name = request.POST.get('account_name', 'All')
+
+        # Parse selected month
+        try:
+            year, month = map(int, selected_month.split('-'))
+        except:
+            year, month = now().year, now().month
+
+        # Filter transactions
+        queryset = Transaction.objects.filter(
+            user=request.user,
+            date__year=year,
+            date__month=month
+        ).select_related('category', 'transaction_account')
+
+        if account_name != 'All':
+            queryset = queryset.filter(transaction_account__name=account_name)
+
+        transactions = queryset.order_by('-date')
+        print(top_category)
+        # Render the template
+        template = get_template('finance/analysis_pdf.html')
+        html = template.render({
+            'net_savings': net_savings,
+            'top_category': top_category,
+            'chart_pie': chart_pie,
+            'chart_bar': chart_bar,
+            'selected_month': selected_month,
+            'selected_account': account_name,
+            'transactions': transactions,
+            'generated_on': now(),
+        })
+
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="analysis_report.pdf"'
+        pisa.CreatePDF(html, dest=response)
+        return response
+    else:
+        return HttpResponse("Invalid request", status=400)
 
 @login_required
 def transaction_list(request):

@@ -1,0 +1,55 @@
+<h1>Spending Report</h1>
+<p><strong>Generated On:</strong> {{ generated_on|date:"Y-m-d H:i" }}</p>
+
+<div class="summary">
+  <p><strong>Filter - Month:</strong> {{ selected_month }}</p>
+  <p><strong>Filter - Account:</strong> {{ selected_account }}</p>
+  <p><strong>Net Savings:</strong> €{{ net_savings }}</p>
+  <p><strong>Top Spending Category:</strong> {{ top_category }}</p>
+</div>
+
+{% if chart_pie %}
+  <h3 style="text-align: center; margin-top: 30px;">Top Spending Categories</h3>
+  <div style="text-align: center;">
+    <img src="{{ chart_pie }}" alt="Pie Chart" style="max-width: 400px; width: 100%; height: auto; margin: auto;">
+  </div>
+{% endif %}
+
+{% if chart_bar %}
+  <h3 style="text-align: center; margin-top: 30px;">Income vs Expenses (Last 6 Months)</h3>
+  <div style="text-align: center;">
+    <img src="{{ chart_bar }}" alt="Bar Chart" style="max-width: 500px; width: 100%; height: auto; margin: auto;">
+  </div>
+{% endif %}
+
+
+
+{% if transactions %}
+  <h3 style="margin-top: 30px; text-align: center;">Transaction Details</h3>
+  <table border="1" cellspacing="0" cellpadding="4" width="100%">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount (€)</th>
+        <th>Category</th>
+        <th>Account</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tx in transactions %}
+      <tr>
+        <td>{{ tx.date|date:"Y-m-d" }}</td>
+        <td>{{ tx.get_entry_type_display}}</td>
+        <td>{{ tx.amount }}</td>
+        <td>{{ tx.category.name }}</td>
+        <td>{{ tx.transaction_account.name }}</td>
+        <td>{{ tx.note|default:"-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No transactions found for this filter.</p>
+{% endif %}

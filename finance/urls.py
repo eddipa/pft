@@ -1,6 +1,9 @@
 from django.urls import path, include
 
-from .views import dashboard, analysis_view
+from .views import (
+    dashboard, 
+    analysis_view,
+    export_analysis_pdf,)
 from .views import (
     transaction_list,
     transaction_export_csv,
@@ -26,6 +29,7 @@ app_name = 'finance'
 urlpatterns = [
 	path('', dashboard, name='dashboard'),
     path('analysis/', analysis_view, name='analysis'),
+    path('analysis/pdf/', export_analysis_pdf, name='export_analysis_pdf'),
 
     path('transactions/', transaction_list, name='transaction_list'),
     path('transactions/export/', transaction_export_csv, name='transaction_export_csv'),
