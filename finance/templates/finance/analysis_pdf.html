@@ -1,7 +1,7 @@
-<h1>Spending Report</h1>
+<h1 style="text-align: center;">Spending Report</h1>
 <p><strong>Generated On:</strong> {{ generated_on|date:"Y-m-d H:i" }}</p>
 
-<div class="summary">
+<div class="summary" style="margin: 20px 0;">
   <p><strong>Filter - Month:</strong> {{ selected_month }}</p>
   <p><strong>Filter - Account:</strong> {{ selected_account }}</p>
   <p><strong>Net Savings:</strong> €{{ net_savings }}</p>
@@ -10,24 +10,22 @@
 
 {% if chart_pie %}
   <h3 style="text-align: center; margin-top: 30px;">Top Spending Categories</h3>
-  <div style="text-align: center;">
-    <img src="{{ chart_pie }}" alt="Pie Chart" style="max-width: 400px; width: 100%; height: auto; margin: auto;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="{{ chart_pie }}" alt="Pie Chart" style="max-width: 400px; width: 100%; height: auto;">
   </div>
 {% endif %}
 
 {% if chart_bar %}
   <h3 style="text-align: center; margin-top: 30px;">Income vs Expenses (Last 6 Months)</h3>
-  <div style="text-align: center;">
-    <img src="{{ chart_bar }}" alt="Bar Chart" style="max-width: 500px; width: 100%; height: auto; margin: auto;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="{{ chart_bar }}" alt="Bar Chart" style="max-width: 500px; width: 100%; height: auto;">
   </div>
 {% endif %}
 
-
-
 {% if transactions %}
   <h3 style="margin-top: 30px; text-align: center;">Transaction Details</h3>
-  <table border="1" cellspacing="0" cellpadding="4" width="100%">
-    <thead>
+  <table border="1" cellspacing="0" cellpadding="4" width="100%" style="border-collapse: collapse; margin-top: 10px;">
+    <thead style="background-color: #f0f0f0;">
       <tr>
         <th>Date</th>
         <th>Type</th>
@@ -41,7 +39,7 @@
       {% for tx in transactions %}
       <tr>
         <td>{{ tx.date|date:"Y-m-d" }}</td>
-        <td>{{ tx.get_entry_type_display}}</td>
+        <td>{{ tx.get_entry_type_display }}</td>
         <td>{{ tx.amount }}</td>
         <td>{{ tx.category.name }}</td>
         <td>{{ tx.transaction_account.name }}</td>
@@ -51,5 +49,5 @@
     </tbody>
   </table>
 {% else %}
-  <p>No transactions found for this filter.</p>
+  <p style="text-align: center; margin-top: 20px;">No transactions found for this filter.</p>
 {% endif %}

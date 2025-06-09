@@ -6,7 +6,7 @@
   <div class="card shadow-sm">
     <div class="card-body">
       <h2 class="mb-4 text-center">
-        <i class="bi bi-folder-plus"></i> {{ title }}
+        <i class="fas fa-folder-plus"></i> {{ title }}
       </h2>
 
       <form method="post" class="needs-validation" novalidate>
@@ -40,7 +40,7 @@
         <div class="d-flex justify-content-end">
           <a href="{% url 'finance:category_list' %}" class="btn btn-secondary me-2">Cancel</a>
           <button type="submit" class="btn btn-primary">
-            <i class="bi bi-save"></i> Save
+            <i class="fas fa-floppy-disk"></i> Save
           </button>
         </div>
       </form>
@@ -57,5 +57,4 @@
     }
   });
 </script>
-
 {% endblock %}

@@ -1,123 +1,147 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-  <h2>Transactions</h2>
+  <h2 class="mb-4"><i class="bi bi-list-ul"></i> Transactions</h2>
 
-	<form method="get" class="row g-2 mb-4">
-	  <div class="col-md-3">
-	    <input type="text" name="q" class="form-control" placeholder="Search description" value="{{ query }}">
-	  </div>
+  <!-- Filter Form -->
+  <form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-md-3">
+      <label class="form-label">Search</label>
+      <input type="text" name="q" class="form-control" placeholder="Search description" value="{{ query }}">
+    </div>
 
-	  <div class="col-md-2">
-	    <select name="category" class="form-control">
-	      <option value="">All Categories</option>
-	      {% for cat in categories %}
-	        <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-	      {% endfor %}
-	    </select>
-	  </div>
+    <div class="col-md-2">
+      <label class="form-label">Category</label>
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-	  <div class="col-md-2">
-	    <select name="account" class="form-control">
-	      <option value="">All Accounts</option>
-	      {% for acc in accounts %}
-	        <option value="{{ acc.id }}" {% if selected_account == acc.id %}selected{% endif %}>{{ acc.name }}</option>
-	      {% endfor %}
-	    </select>
-	  </div>
+    <div class="col-md-2">
+      <label class="form-label">Account</label>
+      <select name="account" class="form-select">
+        <option value="">All Accounts</option>
+        {% for acc in accounts %}
+          <option value="{{ acc.id }}" {% if selected_account == acc.id %}selected{% endif %}>{{ acc.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
 
-	  <div class="col-md-2">
-	    <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
-	  </div>
+    <div class="col-md-2">
+      <label class="form-label">From</label>
+      <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+    </div>
 
-	  <div class="col-md-2">
-	    <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
-	  </div>
+    <div class="col-md-2">
+      <label class="form-label">To</label>
+      <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+    </div>
 
-	  <div class="col-md-1">
-	    <button type="submit" class="btn btn-primary w-100">Filter</button>
-	  </div>
+    <div class="col-md-1 d-grid">
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
 
-  		<div class="col-md-1">
-			<a href="{% url 'finance:transaction_list' %}" class="btn btn-secondary w-100">Clear</a>
-		</div>
+    <div class="col-md-1 d-grid">
+      <a href="{% url 'finance:transaction_list' %}" class="btn btn-secondary">Clear</a>
+    </div>
 
-		<div class="col-md-2">
-		  <a href="{% url 'finance:transaction_export_csv' %}?{{ request.GET.urlencode }}" class="btn btn-success w-100">Export CSV</a>
-		</div>
-	</form>
+    <div class="col-md-2 d-grid mt-2 mt-md-0">
+      <a href="{% url 'finance:transaction_export_csv' %}?{{ request.GET.urlencode }}" class="btn btn-success">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+      </a>
+    </div>
+  </form>
 
+  <!-- Transactions Table -->
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
+        <tr>
+          <th><i class="bi bi-calendar-event"></i> Date</th>
+          <th><i class="bi bi-card-text"></i> Description</th>
+          <th><i class="bi bi-cash"></i> Amount</th>
+          <th><i class="bi bi-tags"></i> Category</th>
+          <th><i class="bi bi-wallet2"></i> Account</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in transactions %}
+        <tr>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.description|default:"—" }}</td>
+          <td>
+            {% if transaction.entry_type == "IN" %}
+              <span class="text-success">+{{ transaction.amount }}</span>
+            {% else %}
+              <span class="text-danger">-{{ transaction.amount }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if transaction.category %}
+              <span class="badge" style="background-color: {{ transaction.category.color|default:'#6c757d' }}; color: white;">
+                {% if transaction.category.icon %}
+                  <i class="{{ transaction.category.icon }}"></i>
+                {% endif %}
+                {{ transaction.category.name }}
+              </span>
+            {% else %}
+              <span class="text-muted">No category</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if transaction.transaction_account %}
+              <span class="badge" style="background-color: {{ transaction.transaction_account.color|default:'#dee2e6' }}; color: black;">
+                {{ transaction.transaction_account.name }}
+              </span>
+            {% else %}
+              <span class="text-muted">N/A</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'finance:edit_transaction' transaction.pk %}" class="btn btn-sm btn-outline-primary me-1">
+              <i class="fas fa-pen-to-square"></i>
+            </a>
+            <a href="{% url 'finance:delete_transaction' transaction.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted">No transactions found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-  <table class="table table-striped mt-3">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Amount</th>
-        <th>Category</th>
-        <th>Account</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for transaction in transactions %}
-      <tr>
-        <td>{{ transaction.date }}</td>
-        <td>{{ transaction.description }}</td>
-        <td>{{ transaction.amount }}</td>
-        <td>
-				  {% if transaction.category %}
-				    <span class="badge" style="background-color: {{ transaction.category.color|default:'#6c757d' }}; color: white;">
-				      {% if transaction.category.icon %}
-				        <i class="{{ transaction.category.icon|default:'fa-solid fa-tag' }}"></i>
-				      {% endif %}
-				      {{ transaction.category.name }}
-				    </span>
-				  {% else %}
-				    <span class="text-muted">No category</span>
-				  {% endif %}
-				</td>
-        <td>
-		  {% if transaction.transaction_account %}
-			  <span class="badge"
-			        style="background-color: {{ transaction.transaction_account.color|default:'#6c757d' }}; color: black;">
-			    {{ transaction.transaction_account.name }}
-			  </span>
-			{% endif %}
-
-		</td>
-
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5">No transactions found.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
+  <!-- Pagination -->
   <nav aria-label="Transaction pagination">
-  <ul class="pagination">
-    {% if transactions.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode|safe }}&{% endif %}page={{ transactions.previous_page_number }}">Previous</a>
+    <ul class="pagination justify-content-center">
+      {% if transactions.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ transactions.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}</span>
       </li>
-    {% else %}
-      <li class="page-item disabled"><span class="page-link">Previous</span></li>
-    {% endif %}
 
-    <li class="page-item disabled"><span class="page-link">
-      Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}
-    </span></li>
-
-    {% if transactions.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode|safe }}&{% endif %}page={{ transactions.next_page_number }}">Next</a>
-      </li>
-    {% else %}
-      <li class="page-item disabled"><span class="page-link">Next</span></li>
-    {% endif %}
-  </ul>
-</nav>
-
+      {% if transactions.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ transactions.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock %}
