@@ -21,7 +21,7 @@ Examples of unacceptable behavior:
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at [your-email@example.com].
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team.
 
 Project maintainers are responsible for clarifying standards and enforcing consequences.
 
