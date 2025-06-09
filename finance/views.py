@@ -1,6 +1,7 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import json
 import csv
+from collections import defaultdict
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
@@ -90,22 +91,102 @@ def dashboard(request):
 @login_required
 def analysis_view(request):
     user = request.user
-    transactions = Transaction.objects.filter(user=user, entry_type="Ex")
+    today = now()
 
-    # Aggregate expenses per category
-    category_data = {}
-    for t in transactions:
-        cat = t.category.name if t.category else "Uncategorized"
-        category_data[cat] = category_data.get(cat, 0) + float(t.amount)
+    # Get query parameters
+    selected_month = request.GET.get('month')
+    selected_account = request.GET.get('account')
 
-    chart_labels = list(category_data.keys())
-    chart_values = list(category_data.values())
+    # Month options: last 6 months
+    month_options = [(today - timedelta(days=30 * i)).strftime('%Y-%m') for i in range(6)]
+    account_options = TransactionAccount.objects.filter(user=user)
+
+    # Filter base queryset
+    queryset = Transaction.objects.filter(user=user)
+
+    if selected_month:
+        year, month = map(int, selected_month.split('-'))
+        queryset = queryset.filter(date__year=year, date__month=month)
+    else:
+        selected_month = today.strftime('%Y-%m')  # default to current month
+        queryset = queryset.filter(date__year=today.year, date__month=today.month)
+
+    if selected_account and selected_account != 'all':
+        queryset = queryset.filter(transaction_account__id=selected_account)
+
+    # Get all user categories
+    all_categories = TransactionCategory.objects.filter(user=user)
+
+    # Get expense sums for current filter
+    expense_totals = (
+        queryset.filter(entry_type='EX')
+        .values('category')
+        .annotate(total=Sum('amount'))
+    )
+
+    # Build a dict of {category_id: total}
+    expense_dict = {entry['category']: float(entry['total']) for entry in expense_totals}
+
+    # Combine with all categories (add 0 if missing)
+    chart_labels = []
+    chart_values = []
+
+    for cat in all_categories:
+        chart_labels.append(cat.name)
+        chart_values.append(expense_dict.get(cat.id, 0.0))
+
+    # print("chart_labels =", chart_labels)
+    # print("chart_values =", chart_values)
+
+
+    # Find the top category based on the highest value
+    if chart_values:
+        max_index = chart_values.index(max(chart_values))
+        top_category = chart_labels[max_index] if chart_values[max_index] > 0 else "N/A"
+    else:
+        top_category = "N/A"
+
+    # Bar chart: income/expense over last 6 months
+    six_months_ago = today - timedelta(days=180)
+    raw = (
+        Transaction.objects.filter(user=user, date__gte=six_months_ago)
+        .extra(select={'month': "strftime('%%Y-%%m', date)"})
+        .values('month', 'entry_type')
+        .annotate(total=Sum('amount'))
+    )
+
+    # Build a dictionary like {month: {'income': 0, 'expense': 0}}
+    monthly_data = defaultdict(lambda: {'IN': 0, 'EX': 0})
+    for item in raw:
+        monthly_data[item['month']][item['entry_type']] = float(item['total'])
+    # Sort by month and extract values
+    chart_months = sorted(monthly_data.keys())
+    income_data = [monthly_data[m]['IN'] for m in chart_months]
+    expense_data = [monthly_data[m]['EX'] for m in chart_months]
+
+    # print("chart_months =", chart_months)
+    # print("income_data =", income_data)
+    # print("expense_data =", expense_data)
+
+    # Summary
+    net_savings = queryset.filter(entry_type='IN').aggregate(total=Sum('amount'))['total'] or 0
+    net_savings -= queryset.filter(entry_type='EX').aggregate(total=Sum('amount'))['total'] or 0
 
     context = {
-        "chart_labels": json.dumps(chart_labels),
-        "chart_values": json.dumps(chart_values),
+        'chart_labels': chart_labels,
+        'chart_values': chart_values,
+        'chart_months': chart_months,
+        'income_data': income_data,
+        'expense_data': expense_data,
+        'month_options': month_options,
+        'account_options': account_options,
+        'selected_month': selected_month,
+        'selected_account': selected_account,
+        'net_savings': round(net_savings, 2),
+        'top_category': top_category,
     }
-    return render(request, "finance/analysis.html", context)
+
+    return render(request, 'finance/analysis.html', context)
 
 @login_required
 def transaction_list(request):

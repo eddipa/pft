@@ -4,32 +4,159 @@
 
 <h2 class="mb-4">Spending Analysis</h2>
 
-<canvas id="expenseChart" width="400" height="400"></canvas>
+<!-- Filters -->
+<form method="get" class="row g-3 mb-4 align-items-end">
+  <div class="col-md-3">
+    <label for="month" class="form-label">Month</label>
+    <select name="month" id="month" class="form-select">
+      {% for month in month_options %}
+        <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>
+          {{ month }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label for="account" class="form-label">Account</label>
+    <select name="account" id="account" class="form-select">
+      <option value="all" {% if selected_account == 'all' or not selected_account %}selected{% endif %}>All</option>
+      {% for acc in account_options %}
+        <option value="{{ acc.id }}" {% if acc.id|stringformat:"s" == selected_account %}selected{% endif %}>
+          {{ acc.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100">Apply</button>
+  </div>
+</form>
+
+<!-- Summary Card -->
+<div class="mb-4">
+  <div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Summary for {{ selected_month }}</h5>
+      <p class="card-text mb-1"><strong>Net Savings:</strong> €{{ net_savings }}</p>
+      <p class="card-text"><strong>Top Spending Category:</strong> {{ top_category }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+  <!-- Pie Chart -->
+  <div class="col-12 col-lg-6 mb-4 d-flex flex-column align-items-center">
+    <div class="card w-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Top Spending Categories</h5>
+        <div style="position: relative; width: 100%; max-width: 300px; margin: auto;">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="col-12 col-lg-6 mb-4 d-flex flex-column align-items-center">
+    <div class="card w-100">
+      <div class="card-body text-center">
+        <h5 class="card-title">Income vs Expenses (Last 6 Months)</h5>
+        <div style="position: relative; width: 100%; max-width: 360px; margin: auto;">
+          <canvas id="historyChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-  const ctx = document.getElementById('expenseChart').getContext('2d');
-  const expenseChart = new Chart(ctx, {
+  const categoryLabels = {{ chart_labels|safe }};
+  const categoryValues = {{ chart_values|safe }};
+
+  // Dynamically generate one distinct HSL color per category
+  const colors = categoryLabels.map((_, i) => {
+    const hue = (i * 137.5) % 360;  // golden angle for best separation
+    return `hsl(${hue}, 65%, 60%)`;
+  });
+
+  new Chart(document.getElementById('categoryChart'), {
     type: 'pie',
     data: {
-      labels: {{ chart_labels|safe }},
+      labels: categoryLabels,
       datasets: [{
         label: 'Expenses',
-        data: {{ chart_values|safe }},
-        backgroundColor: [
-          '#dc3545', '#fd7e14', '#ffc107', '#0d6efd', '#198754', '#6f42c1'
-        ]
+        data: categoryValues,
+        backgroundColor: colors
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'bottom'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              let value = context.parsed;
+              return `${label}: €${value.toFixed(2)}`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const months = {{ chart_months|safe }};
+  const incomeData = {{ income_data|safe }};
+  const expenseData = {{ expense_data|safe }};
+
+  new Chart(document.getElementById('historyChart'), {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Income',
+          data: incomeData,
+          backgroundColor: '#198754'
+        },
+        {
+          label: 'Expense',
+          data: expenseData,
+          backgroundColor: '#dc3545'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: €${context.parsed.y.toFixed(2)}`;
+            }
+          }
         }
       }
     }
   });
 </script>
+
+
 
 {% endblock %}
