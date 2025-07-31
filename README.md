@@ -27,7 +27,7 @@ A simple and elegant Django-based application for tracking your personal income 
 
 1. **Clone the repository** and create a virtual environment:
    ```bash
-   git clone <your-repo-url>
+   git clone [https://github.com/eddipa/pft](https://github.com/eddipa/pft.git)
    cd personal-finance-tracker
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
