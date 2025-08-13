@@ -35,7 +35,7 @@ A simple and elegant Django-based application for tracking your personal income 
 
 2. **Install the dependencies**:
    ```bash
-   pip install django django-environ
+   pip install -r requirements.txt
    ```
 
 3. **Configure environment variables**:
