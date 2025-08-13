@@ -1,0 +1,10 @@
+Django==5.1.*
+django-environ==0.11.*
+psycopg[binary]==3.2.*
+
+# Dev / QA
+pytest==8.*
+pytest-django==4.*
+ruff==0.5.*
+black==24.*
+isort==5.*
